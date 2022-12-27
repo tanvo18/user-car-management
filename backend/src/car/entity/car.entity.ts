@@ -7,7 +7,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { User } from '../../auth/entity/user.entity';
+import { User } from '../../user/entity/user.entity';
 import { Availability } from '../../availability/entity/availability.entity';
 
 @Entity()
