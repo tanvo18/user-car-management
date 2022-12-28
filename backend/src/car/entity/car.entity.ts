@@ -22,7 +22,9 @@ export class Car extends BaseEntity {
   @JoinColumn()
   user: User;
 
-  @OneToMany((type) => Availability, (availability) => availability.car)
+  @OneToMany((type) => Availability, (availability) => availability.car, {
+    cascade: true,
+  })
   @JoinColumn()
-  availability: Availability;
+  availabilities: Availability[];
 }

@@ -38,6 +38,7 @@
     "class-validator": "^0.13.2",
     "config": "^3.3.8",
     "dotenv": "^16.0.2",
+    "moment": "^2.29.4",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "pg": "^8.8.0",

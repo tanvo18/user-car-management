@@ -31,7 +31,7 @@ export class Availability extends BaseEntity {
   })
   status: CarStatus;
 
-  @ManyToOne((type) => Car, (car) => car.availability)
+  @ManyToOne((type) => Car, (car) => car.availabilities)
   @JoinColumn()
   car: Car;
 }

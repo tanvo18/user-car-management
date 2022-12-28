@@ -1,4 +1,4 @@
-import { Post, Body, Controller, UseGuards } from '@nestjs/common';
+import { Post, Body, Controller, UseGuards, Put } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CarService } from './service/car.service';
@@ -6,6 +6,7 @@ import { CarInfoDto } from './dto/car-info.dto';
 import { Car } from './entity/car.entity';
 import { GetUser } from 'src/user/decorator/get-user.decorator';
 import { User } from 'src/user/entity/user.entity';
+import { Availability } from 'src/availability/entity/availability.entity';
 
 @ApiTags('Car')
 @ApiBearerAuth()
@@ -17,5 +18,13 @@ export class CarController {
   @Post()
   addCar(@Body() car: CarInfoDto, @GetUser() user: User): Promise<Car> {
     return this.carService.addCar(car, user);
+  }
+
+  @Put()
+  setAvailability(
+    @Body() carAvailability: Availability,
+    @GetUser() user: User,
+  ) {
+    return this.carService.setAvailability(user.id, carAvailability);
   }
 }
