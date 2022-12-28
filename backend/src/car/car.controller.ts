@@ -7,6 +7,7 @@ import { Car } from './entity/car.entity';
 import { GetUser } from 'src/user/decorator/get-user.decorator';
 import { User } from 'src/user/entity/user.entity';
 import { Availability } from 'src/availability/entity/availability.entity';
+import { AvailabilityDto } from './dto/availability.dto';
 
 @ApiTags('Car')
 @ApiBearerAuth()
@@ -21,10 +22,7 @@ export class CarController {
   }
 
   @Put()
-  setAvailability(
-    @Body() carAvailability: Availability,
-    @GetUser() user: User,
-  ) {
-    return this.carService.setAvailability(user.id, carAvailability);
+  setAvailability(@Body() body: AvailabilityDto) {
+    return this.carService.setAvailability(body);
   }
 }

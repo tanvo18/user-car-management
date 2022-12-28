@@ -1,24 +1,28 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, Repository, EntityManager } from 'typeorm';
 import { Car } from '../entity/car.entity';
 import { CarInfoDto } from '../dto/car-info.dto';
 import { User } from 'src/user/entity/user.entity';
 import { Availability } from 'src/availability/entity/availability.entity';
+import { Logger } from '@nestjs/common';
 
 @EntityRepository(Car)
 export class CarRepository extends Repository<Car> {
-  async addCar(car: CarInfoDto, user: User): Promise<Car> {
+  async addCar(
+    car: CarInfoDto,
+    user: User,
+    transactionalEntityManager: EntityManager,
+  ): Promise<Car> {
     const newCar = new Car();
     newCar.model = car.model;
     newCar.user = user;
 
-    const saved = await newCar.save();
-
-    return saved;
+    return await transactionalEntityManager.getRepository(Car).save(newCar);
   }
 
   async setAvailability(
     id: number,
     availability: Availability,
+    transactionalEntityManager: EntityManager,
   ): Promise<Car | null> {
     const car = await this.findOne({
       where: { id },
@@ -28,6 +32,8 @@ export class CarRepository extends Repository<Car> {
     if (!car) {
       return null;
     }
+
+    Logger.log('availability', JSON.stringify(availability));
 
     const existingAvailability: Availability = car.availabilities.find(
       (existingAvailability) => existingAvailability.date === availability.date,
@@ -44,6 +50,6 @@ export class CarRepository extends Repository<Car> {
       car.availabilities.push(availability);
     }
 
-    return await car.save();
+    return await transactionalEntityManager.getRepository(Car).save(car);
   }
 }
