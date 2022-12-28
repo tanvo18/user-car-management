@@ -52,4 +52,14 @@ export class CarRepository extends Repository<Car> {
 
     return await transactionalEntityManager.getRepository(Car).save(car);
   }
+
+  async getCars(
+    userId: number,
+    transactionalEntityManager: EntityManager,
+  ): Promise<Car[]> {
+    return await transactionalEntityManager.getRepository(Car).find({
+      where: { user: { id: userId } },
+      relations: ['availabilities'],
+    });
+  }
 }

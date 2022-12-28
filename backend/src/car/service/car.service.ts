@@ -37,4 +37,13 @@ export class CarService {
       return result;
     });
   }
+
+  async getCars(userId: number): Promise<Car[]> {
+    return getConnection().transaction(async (transactionalEntityManager) => {
+      return await this.carRepository.getCars(
+        userId,
+        transactionalEntityManager,
+      );
+    });
+  }
 }
