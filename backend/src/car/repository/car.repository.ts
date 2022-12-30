@@ -55,9 +55,21 @@ export class CarRepository extends Repository<Car> {
     userId: number,
     transactionalEntityManager: EntityManager,
   ): Promise<Car[]> {
-    return await transactionalEntityManager.getRepository(Car).find({
-      where: { user: { id: userId } },
-      relations: ['availabilities'],
-    });
+    // NOTE: Using repository methods to query
+    // return await transactionalEntityManager.getRepository(Car).find({
+    //   where: { user: { id: userId } },
+    //   relations: ['availabilities'],
+    // });
+
+    // TODO: try to use raw query with typeorm
+
+    // NOTE: Using queryBuilder
+    const result = await transactionalEntityManager
+      .getRepository(Car)
+      .createQueryBuilder('car')
+      .leftJoinAndSelect('car.availabilities', 'availability')
+      .getMany();
+
+    return result;
   }
 }
