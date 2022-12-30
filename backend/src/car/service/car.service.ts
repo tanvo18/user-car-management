@@ -5,7 +5,8 @@ import { CarRepository } from '../repository/car.repository';
 import { CarInfoDto } from '../dto/car-info.dto';
 import { User } from 'src/user/entity/user.entity';
 import { Car } from '../entity/car.entity';
-import { AvailabilityDto } from '../dto/availability.dto';
+import { setAvailabilityDto } from '../dto/availability.dto';
+import { toEntity } from '../../utils/transformDto';
 
 @Injectable()
 export class CarService {
@@ -24,12 +25,14 @@ export class CarService {
     });
   }
 
-  async setAvailability(data: AvailabilityDto): Promise<Car | null> {
+  async setAvailability(data: setAvailabilityDto): Promise<Car | null> {
     const { carId, availability } = data;
+    const availabilityEntity = toEntity(availability);
+
     return getConnection().transaction(async (transactionalEntityManager) => {
       const result = await this.carRepository.setAvailability(
         carId,
-        availability,
+        availabilityEntity,
         transactionalEntityManager,
       );
 

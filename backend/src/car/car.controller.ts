@@ -16,7 +16,7 @@ import { CarInfoDto } from './dto/car-info.dto';
 import { Car } from './entity/car.entity';
 import { GetUser } from 'src/user/decorator/get-user.decorator';
 import { User } from 'src/user/entity/user.entity';
-import { AvailabilityDto } from './dto/availability.dto';
+import { setAvailabilityDto } from './dto/availability.dto';
 
 @ApiTags('Car')
 @ApiBearerAuth()
@@ -38,7 +38,7 @@ export class CarController {
   }
 
   @Put()
-  async setAvailability(@Body() body: AvailabilityDto): Promise<Car | null> {
+  async setAvailability(@Body() body: setAvailabilityDto): Promise<Car | null> {
     try {
       const result = await this.carService.setAvailability(body);
       if (!result) {
