@@ -1,4 +1,4 @@
-import { Post, Body, ValidationPipe, Controller } from '@nestjs/common';
+import { Post, Body, ValidationPipe, Controller, Logger } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { SignInCredentialsDto } from './dto/signin-credentials.dto';
 import { SignupCredentialsDto } from './dto/signup-credentials.dto';
@@ -14,6 +14,10 @@ export class UserController {
   signUp(
     @Body(ValidationPipe) signupCredentialsDto: SignupCredentialsDto,
   ): Promise<void> {
+    Logger.log(
+      '======signupCredentialsDto',
+      JSON.stringify(signupCredentialsDto),
+    );
     return this.userService.signUp(signupCredentialsDto);
   }
 

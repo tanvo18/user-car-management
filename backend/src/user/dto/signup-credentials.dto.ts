@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, MinLength, MaxLength, Matches } from 'class-validator';
+import { UserRoles } from '../entity/user-role.entity';
 
 export class SignupCredentialsDto {
   @ApiProperty({ minimum: 4, maximum: 20 })
@@ -20,4 +21,6 @@ export class SignupCredentialsDto {
     message: 'Password too weak',
   })
   password: string;
+
+  roles: UserRoles[];
 }

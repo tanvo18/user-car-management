@@ -5,7 +5,6 @@ import {
   Post,
   Put,
   Get,
-  Logger,
   HttpException,
   HttpStatus,
 } from '@nestjs/common';

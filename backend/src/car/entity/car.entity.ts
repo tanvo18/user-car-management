@@ -18,7 +18,7 @@ export class Car extends BaseEntity {
   @Column({ type: 'varchar' })
   model: string;
 
-  @ManyToOne((type) => User, (user) => user.car)
+  @ManyToOne((type) => User, (user) => user.cars)
   @JoinColumn()
   user: User;
 

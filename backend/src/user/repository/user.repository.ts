@@ -14,12 +14,14 @@ import { JwtPayload } from '../../interfaces/jwt-payload.interface';
 export class UserRepository extends Repository<User> {
   async signUp(signupCredentialsDto: SignupCredentialsDto) {
     try {
-      const { username, password } = signupCredentialsDto;
+      const { username, password, roles } = signupCredentialsDto;
 
       const user = new User();
       user.username = username;
       user.salt = await bcrypt.genSalt();
       user.password = await this.hashPassword(password, user.salt);
+      user.roles = roles;
+
       await user.save();
     } catch (error) {
       if (error.code === '23505') {

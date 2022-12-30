@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Car } from '../../car/entity/car.entity';
-import { Role } from '../../enums/role';
+import { UserRoles } from './user-role.entity';
 
 @Entity()
 @Unique(['username'])
@@ -32,16 +32,13 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar', nullable: true, unique: true })
   email: string;
 
-  @Column({
-    type: 'enum',
-    enum: Role,
-    default: Role.ADMIN,
-  })
-  role: Role;
+  @OneToMany((type) => UserRoles, (role) => role.user, { cascade: true })
+  @JoinColumn()
+  roles: UserRoles[];
 
   @OneToMany((type) => Car, (car) => car.user)
   @JoinColumn()
-  car: Car;
+  cars: Car[];
 
   async validatePassword(password: string): Promise<boolean> {
     const hash = await bcrypt.hash(password, this.salt);

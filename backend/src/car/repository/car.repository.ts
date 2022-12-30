@@ -2,7 +2,7 @@ import { EntityRepository, Repository, EntityManager } from 'typeorm';
 import { Car } from '../entity/car.entity';
 import { CarInfoDto } from '../dto/car-info.dto';
 import { User } from 'src/user/entity/user.entity';
-import { Availability } from 'src/availability/entity/availability.entity';
+import { Availability, CarStatus } from 'src/availability/entity/availability.entity';
 import { Logger } from '@nestjs/common';
 
 @EntityRepository(Car)
