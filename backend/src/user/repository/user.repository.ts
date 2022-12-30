@@ -8,7 +8,7 @@ import * as bcrypt from 'bcrypt';
 import { SignupCredentialsDto } from '../dto/signup-credentials.dto';
 import { SignInCredentialsDto } from '../dto/signin-credentials.dto';
 import { User } from '../entity/user.entity';
-import { JwtPayload } from '../interface/jwt-payload.interface';
+import { JwtPayload } from '../../interfaces/jwt-payload.interface';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {

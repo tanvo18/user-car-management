@@ -9,11 +9,7 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Car } from '../../car/entity/car.entity';
-
-export enum Role {
-  ADMIN = 'admin',
-  USER = 'user',
-}
+import { Role } from '../../enums/role';
 
 @Entity()
 @Unique(['username'])

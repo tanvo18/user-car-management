@@ -2,7 +2,7 @@ import { Post, Body, ValidationPipe, Controller } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { SignInCredentialsDto } from './dto/signin-credentials.dto';
 import { SignupCredentialsDto } from './dto/signup-credentials.dto';
-import { JwtPayload } from './interface/jwt-payload.interface';
+import { JwtPayload } from '../interfaces/jwt-payload.interface';
 import { UserService } from './service/user.service';
 
 @ApiTags('User')
