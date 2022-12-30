@@ -20,20 +20,18 @@ export class CarRepository extends Repository<Car> {
   }
 
   async setAvailability(
-    id: number,
+    carId: number,
     availability: Availability,
     transactionalEntityManager: EntityManager,
   ): Promise<Car | null> {
     const car = await this.findOne({
-      where: { id },
+      where: { id: carId },
       relations: ['availabilities'],
     });
 
     if (!car) {
       return null;
     }
-
-    Logger.log('availability', JSON.stringify(availability));
 
     const existingAvailability: Availability = car.availabilities.find(
       (existingAvailability) => existingAvailability.date === availability.date,

@@ -1,4 +1,14 @@
-import { Body, Controller, UseGuards, Post, Put, Get } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  UseGuards,
+  Post,
+  Put,
+  Get,
+  Logger,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CarService } from './service/car.service';
@@ -13,20 +23,31 @@ import { AvailabilityDto } from './dto/availability.dto';
 @Controller('cars')
 @UseGuards(AuthGuard())
 export class CarController {
-  constructor(private carService: CarService) {}
+  constructor(private carService: CarService) { }
 
   @Get()
-  getCar(@GetUser() user: User): Promise<Car[]> {
-    return this.carService.getCars(user.id);
+  async getCar(@GetUser() user: User): Promise<Car[]> {
+    return await this.carService.getCars(user.id);
   }
 
   @Post()
-  addCar(@Body() car: CarInfoDto, @GetUser() user: User): Promise<Car> {
-    return this.carService.addCar(car, user);
+  async addCar(@Body() car: CarInfoDto, @GetUser() user: User): Promise<Car> {
+    const result = await this.carService.addCar(car, user);
+
+    return result;
   }
 
   @Put()
-  setAvailability(@Body() body: AvailabilityDto) {
-    return this.carService.setAvailability(body);
+  async setAvailability(@Body() body: AvailabilityDto): Promise<Car | null> {
+    try {
+      const result = await this.carService.setAvailability(body);
+      if (!result) {
+        throw new HttpException('Car not found', HttpStatus.NOT_FOUND);
+      }
+
+      return result;
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
   }
 }

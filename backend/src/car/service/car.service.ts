@@ -1,11 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getConnection } from 'typeorm';
 import { CarRepository } from '../repository/car.repository';
 import { CarInfoDto } from '../dto/car-info.dto';
 import { User } from 'src/user/entity/user.entity';
 import { Car } from '../entity/car.entity';
-import { Availability } from 'src/availability/entity/availability.entity';
 import { AvailabilityDto } from '../dto/availability.dto';
 
 @Injectable()
@@ -26,10 +25,10 @@ export class CarService {
   }
 
   async setAvailability(data: AvailabilityDto): Promise<Car | null> {
-    const { id, availability } = data;
+    const { carId, availability } = data;
     return getConnection().transaction(async (transactionalEntityManager) => {
       const result = await this.carRepository.setAvailability(
-        id,
+        carId,
         availability,
         transactionalEntityManager,
       );
