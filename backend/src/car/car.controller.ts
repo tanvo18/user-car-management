@@ -16,6 +16,8 @@ import { Car } from './entity/car.entity';
 import { GetUser } from 'src/user/decorator/get-user.decorator';
 import { User } from 'src/user/entity/user.entity';
 import { setAvailabilityDto } from './dto/availability.dto';
+import { Role } from 'src/enums/role';
+import { Roles } from 'src/user/decorator/roles.decorator';
 
 @ApiTags('Car')
 @ApiBearerAuth()
@@ -25,6 +27,7 @@ export class CarController {
   constructor(private carService: CarService) { }
 
   @Get()
+  @Roles([Role.ADMIN, Role.USER])
   async getCar(@GetUser() user: User): Promise<Car[]> {
     return await this.carService.getCars(user.id);
   }

@@ -36,7 +36,9 @@ export class UserRepository extends Repository<User> {
     signinCredentialDto: SignInCredentialsDto,
   ): Promise<JwtPayload> {
     const { username, password } = signinCredentialDto;
-    const auth = await this.findOne({ username });
+    const auth = await this.findOne({
+      where: { username },
+    });
 
     if (auth && (await auth.validatePassword(password))) {
       return {

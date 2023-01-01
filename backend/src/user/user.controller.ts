@@ -14,10 +14,6 @@ export class UserController {
   signUp(
     @Body(ValidationPipe) signupCredentialsDto: SignupCredentialsDto,
   ): Promise<void> {
-    Logger.log(
-      '======signupCredentialsDto',
-      JSON.stringify(signupCredentialsDto),
-    );
     return this.userService.signUp(signupCredentialsDto);
   }
 
