@@ -5,6 +5,8 @@ import {
   Delete,
   Param,
   ParseIntPipe,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { SignInCredentialsDto } from './dto/signin-credentials.dto';
@@ -19,19 +21,31 @@ export class UserController {
   constructor(private userService: UserService) { }
 
   @Post('/signup')
-  signUp(@Body() signupCredentialsDto: SignupCredentialsDto): Promise<string> {
+  async signUp(
+    @Body() signupCredentialsDto: SignupCredentialsDto,
+  ): Promise<string> {
     return this.userService.signUp(signupCredentialsDto);
   }
 
   @Post('/signin')
-  signIn(
+  async signIn(
     @Body() signinCredentialsDto: SignInCredentialsDto,
   ): Promise<{ accessToken: string; user: JwtPayload }> {
     return this.userService.signIn(signinCredentialsDto);
   }
 
   @Delete(':id')
-  deleteUser(@Param('id', ParseIntPipe) userId: number): Promise<User> {
-    return this.userService.removeUser(userId);
+  async removeUser(@Param('id', ParseIntPipe) userId: number): Promise<User> {
+    try {
+      const resp = await this.userService.removeUser(userId);
+
+      if (!resp) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+
+      return this.userService.removeUser(userId);
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
   }
 }

@@ -2,6 +2,7 @@ import { EntityManager, EntityRepository, Repository } from 'typeorm';
 import {
   ConflictException,
   InternalServerErrorException,
+  Logger,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
@@ -16,9 +17,11 @@ export class UserRepository extends Repository<User> {
     userId: number,
     transactionalEntityManager: EntityManager,
   ): Promise<User> {
-    return await transactionalEntityManager.getRepository(User).findOne({
+    const user = await transactionalEntityManager.getRepository(User).findOne({
       where: { id: userId },
     });
+
+    return user;
   }
 
   async signUp(
@@ -65,8 +68,12 @@ export class UserRepository extends Repository<User> {
   async removeUser(
     userId: number,
     transactionalEntityManager: EntityManager,
-  ): Promise<User> {
+  ): Promise<User | null> {
     const user = await this.findUser(userId, transactionalEntityManager);
+
+    if (!user) {
+      return null;
+    }
 
     return await transactionalEntityManager.getRepository(User).remove(user);
   }

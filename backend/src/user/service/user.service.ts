@@ -49,12 +49,16 @@ export class UserService {
     });
   }
 
-  async removeUser(userId: number): Promise<User> {
+  async removeUser(userId: number): Promise<User | null> {
     return getConnection().transaction(async (transactionalEntityManager) => {
       const resp = await this.userRepository.removeUser(
         userId,
         transactionalEntityManager,
       );
+
+      if (!resp) {
+        return null;
+      }
 
       return resp;
     });
