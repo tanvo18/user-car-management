@@ -12,6 +12,15 @@ import { JwtPayload } from '../../interfaces/jwt-payload.interface';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
+  async findUser(
+    userId: number,
+    transactionalEntityManager: EntityManager,
+  ): Promise<User> {
+    return await transactionalEntityManager.getRepository(User).findOne({
+      where: { id: userId },
+    });
+  }
+
   async signUp(
     signupCredentialsDto: SignupCredentialsDto,
     transactionalEntityManager: EntityManager,
@@ -51,6 +60,15 @@ export class UserRepository extends Repository<User> {
     } else {
       return null;
     }
+  }
+
+  async removeUser(
+    userId: number,
+    transactionalEntityManager: EntityManager,
+  ): Promise<User> {
+    const user = await this.findUser(userId, transactionalEntityManager);
+
+    return await transactionalEntityManager.getRepository(User).remove(user);
   }
 
   private async hashPassword(password: string, salt: string): Promise<string> {

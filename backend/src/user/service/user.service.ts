@@ -48,4 +48,15 @@ export class UserService {
       };
     });
   }
+
+  async removeUser(userId: number): Promise<User> {
+    return getConnection().transaction(async (transactionalEntityManager) => {
+      const resp = await this.userRepository.removeUser(
+        userId,
+        transactionalEntityManager,
+      );
+
+      return resp;
+    });
+  }
 }

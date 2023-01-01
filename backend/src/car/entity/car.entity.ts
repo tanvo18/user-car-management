@@ -3,6 +3,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -18,12 +19,12 @@ export class Car extends BaseEntity {
   @Column({ type: 'varchar' })
   model: string;
 
-  @ManyToOne((type) => User, (user) => user.cars)
-  @JoinColumn()
+  @ManyToOne((type) => User, (user) => user.cars, { onDelete: 'CASCADE' })
+  @JoinTable()
   user: User;
 
   @OneToMany((type) => Availability, (availability) => availability.car, {
-    cascade: true,
+    cascade: ['insert'],
   })
   @JoinColumn()
   availabilities: Availability[];

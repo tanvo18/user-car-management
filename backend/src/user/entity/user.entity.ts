@@ -3,6 +3,8 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
   Unique,
@@ -32,11 +34,17 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar', nullable: true, unique: true })
   email: string;
 
-  @OneToMany((type) => UserRoles, (role) => role.user, { cascade: true })
-  @JoinColumn()
+  @ManyToMany((type) => UserRoles, { cascade: true })
+  @JoinTable({
+    name: 'user_roles_maps',
+    joinColumns: [{ name: 'user_id' }],
+    inverseJoinColumns: [{ name: 'role_id' }],
+  })
   roles: UserRoles[];
 
-  @OneToMany((type) => Car, (car) => car.user)
+  @OneToMany((type) => Car, (car) => car.user, {
+    cascade: ['insert'],
+  })
   @JoinColumn()
   cars: Car[];
 

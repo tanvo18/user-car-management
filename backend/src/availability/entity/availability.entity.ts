@@ -32,7 +32,9 @@ export class Availability extends BaseEntity {
   })
   status: CarStatus;
 
-  @ManyToOne((type) => Car, (car) => car.availabilities)
+  @ManyToOne((type) => Car, (car) => car.availabilities, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   car: Car;
 }

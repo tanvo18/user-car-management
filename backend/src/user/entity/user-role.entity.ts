@@ -1,13 +1,5 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-  JoinColumn,
-  BaseEntity,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
 import { Role } from '../../enums/role';
-import { User } from './user.entity';
 
 @Entity()
 export class UserRoles extends BaseEntity {
@@ -19,8 +11,4 @@ export class UserRoles extends BaseEntity {
     enum: Role,
   })
   roleName: Role;
-
-  @ManyToOne((type) => User, (user) => user.roles)
-  @JoinColumn()
-  user: User;
 }
