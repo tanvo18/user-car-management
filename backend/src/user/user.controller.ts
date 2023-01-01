@@ -13,7 +13,7 @@ export class UserController {
   @Post('/signup')
   signUp(
     @Body(ValidationPipe) signupCredentialsDto: SignupCredentialsDto,
-  ): Promise<void> {
+  ): Promise<string> {
     return this.userService.signUp(signupCredentialsDto);
   }
 

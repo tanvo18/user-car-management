@@ -1,4 +1,4 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityManager, EntityRepository, Repository } from 'typeorm';
 import {
   ConflictException,
   InternalServerErrorException,
@@ -12,7 +12,10 @@ import { JwtPayload } from '../../interfaces/jwt-payload.interface';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
-  async signUp(signupCredentialsDto: SignupCredentialsDto) {
+  async signUp(
+    signupCredentialsDto: SignupCredentialsDto,
+    transactionalEntityManager: EntityManager,
+  ) {
     try {
       const { username, password, roles } = signupCredentialsDto;
 
@@ -22,7 +25,7 @@ export class UserRepository extends Repository<User> {
       user.password = await this.hashPassword(password, user.salt);
       user.roles = roles;
 
-      await user.save();
+      return await transactionalEntityManager.getRepository(User).save(user);
     } catch (error) {
       if (error.code === '23505') {
         throw new ConflictException('Username already exists');
@@ -34,9 +37,10 @@ export class UserRepository extends Repository<User> {
 
   async validateUserPassword(
     signinCredentialDto: SignInCredentialsDto,
+    transactionalEntityManager: EntityManager,
   ): Promise<JwtPayload> {
     const { username, password } = signinCredentialDto;
-    const auth = await this.findOne({
+    const auth = await transactionalEntityManager.getRepository(User).findOne({
       where: { username },
     });
 
