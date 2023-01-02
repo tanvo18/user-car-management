@@ -8,7 +8,7 @@ const typeOrmConfig: TypeOrmModuleOptions = {
   password: process.env.DB_PASSWORD || 'postgres',
   database: process.env.POSTGRES_DB || 'car_db',
   entities: [__dirname + '/**/*.entity.ts', __dirname + '/**/*.entity.js'],
-  migrationsRun: false,
+  migrationsRun: true,
   logging: true,
   migrationsTableName: 'migration',
   migrations: [
@@ -18,7 +18,7 @@ const typeOrmConfig: TypeOrmModuleOptions = {
   cli: {
     migrationsDir: 'src/migration',
   },
-  synchronize: true,
+  synchronize: false,
 };
 
 export = typeOrmConfig;
