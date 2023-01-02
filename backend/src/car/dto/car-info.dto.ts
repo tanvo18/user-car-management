@@ -3,7 +3,7 @@ import { IsNotEmpty } from 'class-validator';
 
 export class CarInfoDto {
   @ApiProperty({
-    required: false,
+    required: true,
   })
   @IsNotEmpty()
   model: string;
