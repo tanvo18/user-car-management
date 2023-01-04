@@ -18,7 +18,7 @@ import { User } from 'src/user/entity/user.entity';
 import { setAvailabilityDto } from './dto/availability.dto';
 import { Role } from 'src/enums/role';
 import { Roles } from 'src/user/decorator/roles.decorator';
-import { DeepPartial } from 'typeorm';
+import { DeepPartial, InsertResult } from 'typeorm';
 
 @ApiTags('Car')
 @ApiBearerAuth()
@@ -49,6 +49,14 @@ export class CarController {
         email,
       },
     };
+  }
+
+  @Post('/add-bulk')
+  async addBulkCar(
+    @Body() car: CarInfoDto,
+    @GetUser() user: User,
+  ): Promise<InsertResult> {
+    return await this.carService.addBulkCar(car, user);
   }
 
   @Put()

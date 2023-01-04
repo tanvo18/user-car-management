@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getConnection } from 'typeorm';
+import { getConnection, InsertResult } from 'typeorm';
 import { CarRepository } from '../repository/car.repository';
 import { CarInfoDto } from '../dto/car-info.dto';
 import { User } from 'src/user/entity/user.entity';
@@ -22,6 +22,44 @@ export class CarService {
         user,
         transactionalEntityManager,
       );
+    });
+  }
+
+  /**
+   * NOTE: Using for loop to handle bulk insert
+   * @param car
+   * @param user
+   * @returns Promise<string>
+   */
+  async addBulkCarByUsingForLoop(car: CarInfoDto, user: User): Promise<string> {
+    for (let i = 0; i < 10; i++) {
+      await this.addCar({ model: `${car.model}-${i}` }, user);
+    }
+
+    return 'Done';
+  }
+
+  /**
+   * NOTE: Using createQueryBuilder insert to handle bulk insert
+   * @param car
+   * @param user
+   * @returns Promise<string>
+   */
+  async addBulkCar(car: CarInfoDto, user: User): Promise<InsertResult> {
+    return getConnection().transaction(async (transactionalEntityManager) => {
+      const bulkCarInfos: CarInfoDto[] = [];
+
+      for (let i = 0; i < 10; i++) {
+        bulkCarInfos.push({ model: `${car.model}-${i}` });
+      }
+
+      const result = await this.carRepository.addBulkCar(
+        bulkCarInfos,
+        user,
+        transactionalEntityManager,
+      );
+
+      return result;
     });
   }
 

@@ -1,8 +1,13 @@
-import { EntityRepository, Repository, EntityManager } from 'typeorm';
+import {
+  EntityRepository,
+  Repository,
+  EntityManager,
+  InsertResult,
+} from 'typeorm';
 import { Car } from '../entity/car.entity';
 import { CarInfoDto } from '../dto/car-info.dto';
 import { User } from 'src/user/entity/user.entity';
-import { Availability, CarStatus } from 'src/availability/entity/availability.entity';
+import { Availability } from 'src/availability/entity/availability.entity';
 import { Logger } from '@nestjs/common';
 
 @EntityRepository(Car)
@@ -17,6 +22,30 @@ export class CarRepository extends Repository<Car> {
     newCar.user = user;
 
     return await transactionalEntityManager.getRepository(Car).save(newCar);
+  }
+
+  async addBulkCar(
+    carInfos: CarInfoDto[],
+    user: User,
+    transactionalEntityManager: EntityManager,
+  ): Promise<InsertResult> {
+    const cars = [];
+    carInfos.forEach((carInfo) => {
+      const newCar = new Car();
+      newCar.model = carInfo.model;
+      newCar.user = user;
+
+      cars.push(newCar);
+    });
+
+    const result = await transactionalEntityManager
+      .createQueryBuilder()
+      .insert()
+      .into(Car)
+      .values(cars)
+      .execute();
+
+    return result;
   }
 
   async setAvailability(
