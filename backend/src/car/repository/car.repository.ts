@@ -9,6 +9,11 @@ import { CarInfoDto } from '../dto/car-info.dto';
 import { User } from 'src/user/entity/user.entity';
 import { Availability } from 'src/availability/entity/availability.entity';
 import { Logger } from '@nestjs/common';
+import {
+  paginate,
+  Pagination,
+  IPaginationOptions,
+} from 'nestjs-typeorm-paginate';
 
 @EntityRepository(Car)
 export class CarRepository extends Repository<Car> {
@@ -96,9 +101,26 @@ export class CarRepository extends Repository<Car> {
     const result = await transactionalEntityManager
       .getRepository(Car)
       .createQueryBuilder('car')
+      .leftJoinAndSelect('car.user', 'user')
       .leftJoinAndSelect('car.availabilities', 'availability')
+      .where('user.id = :id', { id: userId })
       .getMany();
 
     return result;
+  }
+
+  async getCarsPagination(
+    options: IPaginationOptions,
+    userId: number,
+    transactionalEntityManager: EntityManager,
+  ): Promise<Pagination<Car>> {
+    // NOTE: Using queryBuilder
+    const queryBuilder = await transactionalEntityManager
+      .getRepository(Car)
+      .createQueryBuilder('car')
+      .leftJoinAndSelect('car.availabilities', 'availability')
+      .orderBy('car.id');
+
+    return paginate<Car>(queryBuilder, options);
   }
 }
