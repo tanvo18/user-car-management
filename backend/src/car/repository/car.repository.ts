@@ -110,15 +110,17 @@ export class CarRepository extends Repository<Car> {
   }
 
   async getCarsPagination(
-    options: IPaginationOptions,
     userId: number,
+    options: IPaginationOptions,
     transactionalEntityManager: EntityManager,
   ): Promise<Pagination<Car>> {
     // NOTE: Using queryBuilder
     const queryBuilder = await transactionalEntityManager
       .getRepository(Car)
       .createQueryBuilder('car')
+      .leftJoinAndSelect('car.user', 'user')
       .leftJoinAndSelect('car.availabilities', 'availability')
+      .where('user.id = :id', { id: userId })
       .orderBy('car.id');
 
     return paginate<Car>(queryBuilder, options);

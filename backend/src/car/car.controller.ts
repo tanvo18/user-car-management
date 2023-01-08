@@ -7,6 +7,9 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  Query,
+  DefaultValuePipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -19,6 +22,7 @@ import { setAvailabilityDto } from './dto/availability.dto';
 import { Role } from 'src/enums/role';
 import { Roles } from 'src/user/decorator/roles.decorator';
 import { DeepPartial, InsertResult } from 'typeorm';
+import { Pagination } from 'nestjs-typeorm-paginate';
 
 @ApiTags('Car')
 @ApiBearerAuth()
@@ -29,8 +33,32 @@ export class CarController {
 
   @Get()
   @Roles([Role.ADMIN, Role.USER])
-  async getCar(@GetUser() user: User): Promise<Car[]> {
-    return await this.carService.getCars(user.id);
+  async getCars(@GetUser() user: User): Promise<Car[]> {
+    try {
+      return await this.carService.getCars(user.id);
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  @Get('pagination')
+  @Roles([Role.ADMIN, Role.USER])
+  async getCarPagination(
+    @GetUser() user: User,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page,
+    @Query('limit', new DefaultValuePipe(5), ParseIntPipe) limit,
+  ): Promise<Pagination<Car>> {
+    try {
+      limit = limit > 100 ? 100 : limit;
+
+      return await this.carService.getCarsPagination(user.id, {
+        page,
+        limit,
+        route: '/cars/pagination',
+      });
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
   }
 
   @Post()
@@ -38,17 +66,21 @@ export class CarController {
     @Body() car: CarInfoDto,
     @GetUser() user: User,
   ): Promise<DeepPartial<Car>> {
-    const result = await this.carService.addCar(car, user);
-    const { username, name, email } = result.user;
+    try {
+      const result = await this.carService.addCar(car, user);
+      const { username, name, email } = result.user;
 
-    return {
-      model: result.model,
-      user: {
-        username,
-        name,
-        email,
-      },
-    };
+      return {
+        model: result.model,
+        user: {
+          username,
+          name,
+          email,
+        },
+      };
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
   }
 
   @Post('/add-bulk')
@@ -56,7 +88,11 @@ export class CarController {
     @Body() car: CarInfoDto,
     @GetUser() user: User,
   ): Promise<InsertResult> {
-    return await this.carService.addBulkCar(car, user);
+    try {
+      return await this.carService.addBulkCar(car, user);
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
   }
 
   @Put()

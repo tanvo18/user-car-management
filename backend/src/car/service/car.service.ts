@@ -7,6 +7,7 @@ import { User } from 'src/user/entity/user.entity';
 import { Car } from '../entity/car.entity';
 import { setAvailabilityDto } from '../dto/availability.dto';
 import { toEntity } from '../../utils/transformDto';
+import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class CarService {
@@ -82,6 +83,19 @@ export class CarService {
     return getConnection().transaction(async (transactionalEntityManager) => {
       return await this.carRepository.getCars(
         userId,
+        transactionalEntityManager,
+      );
+    });
+  }
+
+  async getCarsPagination(
+    userId: number,
+    options: IPaginationOptions,
+  ): Promise<Pagination<Car>> {
+    return getConnection().transaction(async (transactionalEntityManager) => {
+      return await this.carRepository.getCarsPagination(
+        userId,
+        options,
         transactionalEntityManager,
       );
     });
