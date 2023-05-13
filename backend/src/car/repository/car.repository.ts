@@ -85,11 +85,9 @@ export class CarRepository extends Repository<Car> {
     return await transactionalEntityManager.getRepository(Car).save(car);
   }
 
-  async getCars(
-    userId: number,
-    transactionalEntityManager: EntityManager,
-  ): Promise<Car[]> {
+  async getCars(userId: number): Promise<Car[]> {
     // NOTE: Using repository methods to query
+
     // return await transactionalEntityManager.getRepository(Car).find({
     //   where: { user: { id: userId } },
     //   relations: ['availabilities'],
@@ -98,13 +96,23 @@ export class CarRepository extends Repository<Car> {
     // TODO: try to use raw query with typeorm
 
     // NOTE: Using queryBuilder
-    const result = await transactionalEntityManager
-      .getRepository(Car)
-      .createQueryBuilder('car')
-      .leftJoinAndSelect('car.user', 'user')
-      .leftJoinAndSelect('car.availabilities', 'availability')
-      .where('user.id = :id', { id: userId })
-      .getMany();
+    // Also we can use getConnection().getRepository(Car) if we don't want to use transactionalEntityManager
+    // const result = await transactionalEntityManager
+    //   .getRepository(Car)
+    //   .createQueryBuilder('car')
+    //   .leftJoinAndSelect('car.user', 'user')
+    //   .leftJoinAndSelect('car.availabilities', 'availability')
+    //   .where('user.id = :id', { id: userId })
+    //   .getMany();
+
+    const result = await this.find({
+      where: {
+        user: {
+          id: userId,
+        },
+      },
+      relations: ['availabilities', 'user'],
+    });
 
     return result;
   }

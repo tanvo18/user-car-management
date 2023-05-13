@@ -80,12 +80,15 @@ export class CarService {
   }
 
   async getCars(userId: number): Promise<Car[]> {
-    return getConnection().transaction(async (transactionalEntityManager) => {
-      return await this.carRepository.getCars(
-        userId,
-        transactionalEntityManager,
-      );
-    });
+    // TODO: How to test this service when we apply transaction?
+    // return getConnection().transaction(async (transactionalEntityManager) => {
+    //   return await this.carRepository.getCars(
+    //     userId,
+    //     transactionalEntityManager,
+    //   );
+    // });
+
+    return await this.carRepository.getCars(userId);
   }
 
   async getCarsPagination(
